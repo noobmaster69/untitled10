@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   @default("")
+  name      String?
+  timezone  String   @default("UTC")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  habits Habit[]
+
+  @@map("users")
+}
+
+model Habit {
+  id           String    @id @default(uuid())
+  userId       String    @map("user_id")
+  name         String
+  description  String?
+  color        String    @default("#22c55e")
+  type         String    @default("binary")
+  targetPerDay Int       @default(1) @map("target_per_day")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  archivedAt   DateTime? @map("archived_at")
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries HabitEntry[]
+
+  @@index([userId])
+  @@map("habits")
+}
+
+model HabitEntry {
+  id        String   @id @default(uuid())
+  habitId   String   @map("habit_id")
+  entryDate DateTime @map("entry_date") @db.Date
+  count     Int      @default(1)
+  note      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, entryDate])
+  @@index([habitId, entryDate(sort: Desc)])
+  @@map("habit_entries")
+}
