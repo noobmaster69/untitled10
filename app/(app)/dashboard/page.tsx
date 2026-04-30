@@ -26,7 +26,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [year] = useState(new Date().getFullYear());
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(currentYear);
+  const yearOptions = [currentYear, currentYear - 1, currentYear - 2];
 
   const { data: habits = [] } = useQuery<Habit[]>({
     queryKey: ["habits"],
@@ -152,14 +154,37 @@ export default function DashboardPage() {
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            All habits — {year}
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              All habits
+            </h2>
+            <select
+              value={year}
+              onChange={(e) => setYear(parseInt(e.target.value))}
+              className="text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md px-2 py-1 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+              aria-label="Select year"
+            >
+              {yearOptions.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </div>
           {heatmapData ? (
-            <Heatmap cells={heatmapData.cells} year={year} baseColor="#22c55e" />
+            <Heatmap
+              cells={heatmapData.cells}
+              year={year}
+              baseColor="#22c55e"
+              showSummary
+              onCellClick={(date) => router.push(`/journal/${date}`)}
+            />
           ) : (
             <div className="h-32 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
           )}
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            Click a day to open its journal.
+          </p>
         </section>
 
         <section>

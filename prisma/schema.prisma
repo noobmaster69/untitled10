@@ -15,7 +15,8 @@ model User {
   timezone  String   @default("UTC")
   createdAt DateTime @default(now()) @map("created_at")
 
-  habits Habit[]
+  habits         Habit[]
+  journalEntries JournalEntry[]
 
   @@map("users")
 }
@@ -51,4 +52,19 @@ model HabitEntry {
   @@unique([habitId, entryDate])
   @@index([habitId, entryDate(sort: Desc)])
   @@map("habit_entries")
+}
+
+model JournalEntry {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  entryDate DateTime @map("entry_date") @db.Date
+  note      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, entryDate])
+  @@index([userId, entryDate(sort: Desc)])
+  @@map("journal_entries")
 }

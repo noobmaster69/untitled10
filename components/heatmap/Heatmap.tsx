@@ -16,6 +16,8 @@ interface HeatmapProps {
   cells: HeatmapCell[];
   baseColor?: string;
   year: number;
+  selectedDate?: string;
+  showSummary?: boolean;
   onCellClick?: (date: string, value: number) => void;
 }
 
@@ -29,8 +31,25 @@ const MONTH_LABELS = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-export function Heatmap({ cells, baseColor = "#22c55e", year, onCellClick }: HeatmapProps) {
+export function Heatmap({
+  cells,
+  baseColor = "#22c55e",
+  year,
+  selectedDate,
+  showSummary = false,
+  onCellClick,
+}: HeatmapProps) {
   const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
+
+  const { totalCount, activeDays } = useMemo(() => {
+    let total = 0;
+    let active = 0;
+    for (const c of cells) {
+      total += c.value;
+      if (c.value > 0) active += 1;
+    }
+    return { totalCount: total, activeDays: active };
+  }, [cells]);
 
   const { grid, monthPositions, numWeeks } = useMemo(() => {
     // Build a grid: 7 rows x N columns
@@ -46,7 +65,6 @@ export function Heatmap({ cells, baseColor = "#22c55e", year, onCellClick }: Hea
 
     // Build week columns
     let currentWeek: (HeatmapCell | null)[] = Array(7).fill(null);
-    let col = 0;
     let lastMonth = -1;
 
     // Fill initial empty cells
@@ -60,7 +78,6 @@ export function Heatmap({ cells, baseColor = "#22c55e", year, onCellClick }: Hea
 
       if (dayOfWeek === 0 && currentWeek.some((c) => c !== null)) {
         grid.push(currentWeek);
-        col++;
         currentWeek = Array(7).fill(null);
       }
 
@@ -99,6 +116,19 @@ export function Heatmap({ cells, baseColor = "#22c55e", year, onCellClick }: Hea
 
   return (
     <div className="relative">
+      {showSummary && (
+        <div className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+          <span className="font-semibold">{totalCount}</span>{" "}
+          {totalCount === 1 ? "completion" : "completions"}
+          {activeDays > 0 && (
+            <>
+              {" "}across <span className="font-semibold">{activeDays}</span>{" "}
+              {activeDays === 1 ? "day" : "days"}
+            </>
+          )}{" "}
+          in {year}
+        </div>
+      )}
       <div className="overflow-x-auto pb-2">
         <svg
           width={svgWidth}
@@ -143,6 +173,7 @@ export function Heatmap({ cells, baseColor = "#22c55e", year, onCellClick }: Hea
               const y = HEADER_HEIGHT + dayIdx * (CELL_SIZE + CELL_GAP);
               const color = getColorForLevel(cell.level, baseColor);
 
+              const isSelected = selectedDate === cell.date;
               return (
                 <rect
                   key={cell.date}
@@ -154,7 +185,11 @@ export function Heatmap({ cells, baseColor = "#22c55e", year, onCellClick }: Hea
                   fill={color}
                   role="gridcell"
                   aria-label={formatTooltip(cell)}
-                  className="cursor-pointer hover:stroke-gray-600 hover:stroke-1 dark:hover:stroke-gray-300 transition-colors"
+                  aria-selected={isSelected || undefined}
+                  stroke={isSelected ? "currentColor" : "transparent"}
+                  strokeWidth={isSelected ? 1.5 : 1}
+                  style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                  className="cursor-pointer text-gray-900 dark:text-gray-100 transition-transform duration-100 ease-out hover:[transform:scale(1.35)] hover:stroke-gray-700 dark:hover:stroke-gray-200 focus:outline-none focus-visible:stroke-gray-900 dark:focus-visible:stroke-gray-100"
                   onClick={() => onCellClick?.(cell.date, cell.value)}
                   onMouseEnter={(e) => {
                     const rect = (e.target as SVGRectElement).getBoundingClientRect();
