@@ -33,7 +33,7 @@ const MONTH_LABELS = [
 
 export function Heatmap({
   cells,
-  baseColor = "#22c55e",
+  baseColor = "#ef4444",
   year,
   selectedDate,
   showSummary = false,

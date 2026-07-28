@@ -34,7 +34,7 @@ export function HabitRow({
       <div className="flex-1 min-w-0">
         <button
           onClick={onNavigate}
-          className="text-left font-medium text-gray-900 dark:text-white hover:text-green-600 dark:hover:text-green-400 transition-colors truncate block w-full"
+          className="text-left font-medium text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors truncate block w-full"
         >
           {habit.name}
         </button>
@@ -54,7 +54,7 @@ export function HabitRow({
         disabled={isToggling}
         className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold transition-all ${
           isDoneToday
-            ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+            ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
             : "bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-500 dark:hover:bg-gray-600"
         } ${isToggling ? "opacity-50" : ""}`}
         aria-label={isDoneToday ? `${habit.name} done today` : `Mark ${habit.name} done`}

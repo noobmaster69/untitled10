@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         name: name.trim(),
         description: description || null,
-        color: color || "#22c55e",
+        color: color || "#ef4444",
         type: type || "binary",
         targetPerDay: targetPerDay || 1,
       },

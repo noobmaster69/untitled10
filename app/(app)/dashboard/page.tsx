@@ -161,7 +161,7 @@ export default function DashboardPage() {
             <select
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value))}
-              className="text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md px-2 py-1 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md px-2 py-1 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500"
               aria-label="Select year"
             >
               {yearOptions.map((y) => (
@@ -175,7 +175,7 @@ export default function DashboardPage() {
             <Heatmap
               cells={heatmapData.cells}
               year={year}
-              baseColor="#22c55e"
+              baseColor="#ef4444"
               showSummary
               onCellClick={(date) => router.push(`/journal/${date}`)}
             />
@@ -194,7 +194,7 @@ export default function DashboardPage() {
             </h2>
             <button
               onClick={() => setShowForm(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium transition-colors"
             >
               + New habit
             </button>

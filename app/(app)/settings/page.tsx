@@ -60,7 +60,7 @@ export default function SettingsPage() {
           <select
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           >
             {COMMON_TIMEZONES.map((tz) => (
               <option key={tz} value={tz}>
@@ -70,7 +70,7 @@ export default function SettingsPage() {
           </select>
           <button
             onClick={handleSave}
-            className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
+            className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium transition-colors"
           >
             {saved ? "Saved!" : "Save timezone"}
           </button>
